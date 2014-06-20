@@ -18,6 +18,12 @@ you can perform actions again, assuming that you are not moving at exceedingly h
 Ingress Integrated Timer inspired me to write an application that would keep track of your movement while playing Ingress and be able to tell you when exactly you can play again -
 i.e., when 10 minutes since the last location update in Ingress have passed or the speed wave passed by. 
 
+Screenshots
+-----------
+
+![Notification while not being blocked](https://dl.dropboxusercontent.com/u/9409349/SpeedWave/fine.png "Notification while not being blocked")
+![Notification while being blocked](https://dl.dropboxusercontent.com/u/9409349/SpeedWave/blocked.png " while being blocked")
+
 Acknowledgements
 ----------------
 
