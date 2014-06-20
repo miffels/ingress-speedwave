@@ -1,31 +1,38 @@
-package com.jj.speedwave;
+package com.jj.speedwave.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jj.speedwave.R;
+import com.jj.speedwave.util.Log;
+
+/**
+ * Settings go here when it's time.
+ * 
+ * @author Michael Jess
+ *
+ */
 public class SettingsActivity extends Activity {
+	
+	private static final Log LOG = new Log();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 		
-		Log.d("speedwave", "Settings start");
+		LOG.d("Settings start");
 
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		Intent serviceIntent = new Intent(this, IngressListenerService.class);
-		this.startService(serviceIntent);
 	}
 
 	@Override

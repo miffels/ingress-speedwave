@@ -10,6 +10,7 @@
     
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".IngressSpeedWave"
@@ -18,22 +19,26 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.jj.speedwave.SettingsActivity"
+            android:name="com.jj.speedwave.ui.SettingsActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         
         <service
-            	android:name=".IngressListenerService">
+            	android:name=".services.ingress.IngressListenerService">
+		</service>
+		<service
+            	android:name=".services.geo.LocationService">
+		</service>
+		<service
+            	android:name=".services.speed.SpeedWaveService">
 		</service>
 	
 		<receiver
-		    android:name=".BootBroadcastReceiver"
-		    android:exported="true">
+		    android:name=".receiver.BootBroadcastReceiver">
 		    <intent-filter>
 		        <action android:name="android.intent.action.BOOT_COMPLETED"/>
 		    </intent-filter>
