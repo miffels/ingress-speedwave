@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Ingress SpeedWave</string>
-    <string name="settings_placeholder">Background services started. You may close this now. Have fun playing Ingress!</string>
+    <string name="app_name">SpeedWave</string>
+    <string name="settings_placeholder">Background services started. You may close this window now. Have fun playing Ingress!</string>
     <string name="action_settings">Settings</string>
 
 </resources>
