@@ -21,11 +21,11 @@ i.e., when 10 minutes since the last location update in Ingress have passed or t
 Changes
 -------
 
-- v0.1.3
+- v0.1.3 [download](https://dl.dropboxusercontent.com/u/9409349/SpeedWave/0.1/IngressSpeedWave-0.1.3.apk)
  - Fixed crash when rebooting
  - Fixed crash when starting Ingress
 
-- v0.1.2
+- v0.1.2 [download](https://dl.dropboxusercontent.com/u/9409349/SpeedWave/0.1/IngressSpeedWave-0.1.2.apk)
  - Lots of refactoring
  - Some more tests
  - Gray notification is now ongoing (sticky)
@@ -36,7 +36,7 @@ Changes
  - Tapping the green notification now dismisses it
  - Location and Ingress Listener background services are now explicitly stopped when the screen is locked
   
-- v0.1.1
+- v0.1.1 [download](https://dl.dropboxusercontent.com/u/9409349/SpeedWave/0.1/IngressSpeedWave-0.1.1.apk)
  - Changed application name to "SpeedWave"
  - Added proper application icons 
 - v0.1
