@@ -9,8 +9,16 @@ import com.jj.speedwave.services.geo.LocationService;
 import com.jj.speedwave.services.ingress.IngressListenerService;
 import com.jj.speedwave.util.Log;
 
+/**
+ * Broadcast receiver that listens to screen on/off events, in order to explicitly stop
+ * the location and Ingress listener services when they are not needed. The Ingress listener
+ * service is restarted when the screen is turned back on.
+ * 
+ * @author Michael Jess
+ *
+ */
 public class ScreenReceiver extends BroadcastReceiver {
-	
+
 	private static final Log LOG = new Log();
 
 	@Override

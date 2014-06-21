@@ -24,35 +24,40 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 		return provider;
 	}
 	
-	private CurrentLocationProvider mockLocationProvider(Location location) {
-		CurrentLocationProvider locationProvider = Mockito.mock(CurrentLocationProvider.class);
-		Mockito.when(locationProvider.getCurrentLocation()).thenReturn(location);
+	private LocationProvider mockLocationProvider(Location... locations) {
+		LocationProvider locationProvider = Mockito.mock(LocationProvider.class);
+		Mockito.when(locationProvider.getCurrentLocation()).thenReturn(locations[locations.length - 1]);
+		Location[] previousLocations = new Location[locations.length - 1];
+		System.arraycopy(locations, 0, previousLocations, 0, previousLocations.length);
+		Mockito.when(locationProvider.getPreviousLocations()).thenReturn(Arrays.asList(previousLocations));
+		Mockito.when(locationProvider.isReady()).thenReturn(locations.length > 1);
 		return locationProvider;
 	}
 	
 	public void testEmptyList() {
-		Location location = mockLocation();
-		CurrentLocationProvider locationProvider = mockLocationProvider(location);
+		LocationProvider locationProvider = mockLocationProvider(mockLocation());
+		Mockito.when(locationProvider.isReady()).thenReturn(true);
+		Mockito.when(locationProvider.getPreviousLocations()).thenReturn(new ArrayList<Location>()); // Simulate fading of previous locations
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
-		new SpeedWaveChecker(new ArrayList<Location>(), locationProvider, listener).run();
+		new SpeedWaveChecker(locationProvider, listener).run();
 		
 		Mockito.verify(listener).onFinish();
 		Mockito.verifyNoMoreInteractions(listener);
 	}
 	
 	public void testNullLocation() {
-		CurrentLocationProvider locationProvider = mockLocationProvider(null);
+		LocationProvider locationProvider = mockLocationProvider((Location)null);
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
-		new SpeedWaveChecker(Arrays.asList(mockLocation()), locationProvider, listener).run();
+		new SpeedWaveChecker(locationProvider, listener).run();
 		
 		Mockito.verifyNoMoreInteractions(listener);
 	}
 	
 	public void testInitialLocation() {
 		Location location = mockLocation();
-		CurrentLocationProvider locationProvider = mockLocationProvider(location);
+		LocationProvider locationProvider = mockLocationProvider(location);
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
-		new SpeedWaveChecker(Arrays.asList(location), locationProvider, listener).run();
+		new SpeedWaveChecker(locationProvider, listener).run();
 		
 		Mockito.verifyNoMoreInteractions(listener);
 	}
@@ -60,14 +65,14 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 	public void testSlowMovement() {
 		Location furthestLocation = mockLocation();
 		Location currentLocation = mockLocation();
-		CurrentLocationProvider locationProvider = mockLocationProvider(currentLocation);
+		LocationProvider locationProvider = mockLocationProvider(furthestLocation, currentLocation);
 		
 		Mockito.when(furthestLocation.getTime()).thenReturn(0l);
 		Mockito.when(furthestLocation.distanceTo(currentLocation)).thenReturn(10f); // 10 meters movement in 1 second
 		
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
 		
-		new SpeedWaveChecker(Arrays.asList(furthestLocation, currentLocation), locationProvider, listener, mockTimeProvider(1000l)).run();;
+		new SpeedWaveChecker(locationProvider, listener, mockTimeProvider(1000l)).run();;
 		
 		Mockito.verify(listener).onSpeedUpdate(false, 0, 0);
 		Mockito.verifyNoMoreInteractions(listener);
@@ -76,14 +81,14 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 	public void testFastMovement() {
 		Location furthestLocation = mockLocation();
 		Location currentLocation = mockLocation();
-		CurrentLocationProvider locationProvider = mockLocationProvider(currentLocation);
+		LocationProvider locationProvider = mockLocationProvider(furthestLocation, currentLocation);
 		
 		Mockito.when(furthestLocation.getTime()).thenReturn(0l);
 		Mockito.when(furthestLocation.distanceTo(currentLocation)).thenReturn(100f); // 100 meters movement in 1 second
 		
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
 		
-		new SpeedWaveChecker(Arrays.asList(furthestLocation, currentLocation), locationProvider, listener, mockTimeProvider(1000l)).run();;
+		new SpeedWaveChecker(locationProvider, listener, mockTimeProvider(1000l)).run();;
 		
 		Mockito.verify(listener).onSpeedUpdate(true, 7, 8);
 		Mockito.verifyNoMoreInteractions(listener);
@@ -93,7 +98,7 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 		Location furthestLocation = mockLocation();
 		Location intermediateLocation = mockLocation();
 		Location currentLocation = mockLocation();
-		CurrentLocationProvider locationProvider = mockLocationProvider(currentLocation);
+		LocationProvider locationProvider = mockLocationProvider(furthestLocation, intermediateLocation, currentLocation);
 		
 		Mockito.when(furthestLocation.getTime()).thenReturn(0l);
 		Mockito.when(intermediateLocation.getTime()).thenReturn(1000l); // 1 second later
@@ -102,7 +107,7 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 		
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
 		
-		new SpeedWaveChecker(Arrays.asList(furthestLocation, intermediateLocation, currentLocation), locationProvider, listener, mockTimeProvider(2000l)).run();;
+		new SpeedWaveChecker(locationProvider, listener, mockTimeProvider(2000l)).run();;
 		
 		Mockito.verify(listener).onSpeedUpdate(true, 599, 600);
 		Mockito.verifyNoMoreInteractions(listener);

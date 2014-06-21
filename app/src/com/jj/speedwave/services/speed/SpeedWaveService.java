@@ -1,8 +1,5 @@
 package com.jj.speedwave.services.speed;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -11,32 +8,27 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.jj.speedwave.R;
-import com.jj.speedwave.services.LocationReceiver;
-import com.jj.speedwave.services.LocationUpdateHandler;
 import com.jj.speedwave.services.IngressStopReceiver;
+import com.jj.speedwave.services.LocationReceiver;
 import com.jj.speedwave.services.StoppableService;
 import com.jj.speedwave.util.Log;
 
-public class SpeedWaveService extends Service implements StoppableService, LocationUpdateHandler, CurrentLocationProvider, SpeedWaveListener {
+public class SpeedWaveService extends Service implements StoppableService, SpeedWaveListener {
 	
 	private static final Log LOG = new Log();
 	
 	private LocalBroadcastManager broadcastManager;
-	private ScheduledExecutorService scheduler;
 	private Builder builder;
 	private NotificationManager notificationManager;
 	
 	private IngressStopReceiver stopReceiver = new IngressStopReceiver(this);
-	private LocationReceiver locationReceiver = new LocationReceiver(this);
-	
-	private List<Location> locations = new ArrayList<Location>();
-	private Location currentLocation;
+	private LocationManager locationManager = new LocationManager();
+	private LocationReceiver locationReceiver = new LocationReceiver(this.locationManager);
 	
 	private static final int NOTIFICATION_ID = 0;
 	
@@ -44,6 +36,8 @@ public class SpeedWaveService extends Service implements StoppableService, Locat
 	private boolean shouldHideNotification;
 	
 	private boolean initial = true;
+
+	private ScheduledExecutorService scheduler;
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -60,7 +54,7 @@ public class SpeedWaveService extends Service implements StoppableService, Locat
 			this.stopReceiver.registerWith(this.broadcastManager);
 			this.locationReceiver.registerWith(this.broadcastManager);
 			
-			this.scheduler.scheduleAtFixedRate(new SpeedWaveChecker(this.locations, this, this), 0, 1, TimeUnit.SECONDS);
+			this.scheduler.scheduleAtFixedRate(new SpeedWaveChecker(this.locationManager, this), 0, 1, TimeUnit.SECONDS);
 			
 			this.builder = new Builder(this)
 			.setContentTitle("Ingress SpeedWave");
@@ -88,7 +82,7 @@ public class SpeedWaveService extends Service implements StoppableService, Locat
 			this.notificationManager.cancel(NOTIFICATION_ID);
 		}
 		this.scheduler.shutdown();
-		super.onDestroy();
+		this.locationManager.shutdown();
 	}
 
 	@Override
@@ -101,21 +95,6 @@ public class SpeedWaveService extends Service implements StoppableService, Locat
 		if(this.shouldHideNotification) {
 			this.notificationManager.cancel(NOTIFICATION_ID);
 		}
-	}
-
-	@Override
-	public void updateLocation(Location location) {
-		synchronized(this.locations) {
-			this.currentLocation = location;
-			this.locations.add(location);
-			Collections.sort(this.locations, new DescendingDistanceComparator(this.currentLocation));
-			this.scheduler.schedule(new LocationRemover(this.locations, location), 10, TimeUnit.MINUTES);
-		}
-	}
-	
-	@Override
-	public Location getCurrentLocation() {
-		return this.currentLocation;
 	}
 
 	@Override
