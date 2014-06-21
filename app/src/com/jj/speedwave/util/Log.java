@@ -37,7 +37,7 @@ public class Log {
 	 *  See <b>iShouldNotLog()</b> for the interplay between global and local
 	 *  log level.
 	 */
-	private LogLevel logLevel = LogLevel.NONE;
+	private LogLevel logLevel = LogLevel.DEBUG;
 	
 	/**
 	 * Regular expression used to extract the caller's class name from the
@@ -247,10 +247,11 @@ public class Log {
 	 * 
 	 * @param logLevel The minimum log level to set
 	 */
-	public void setLogLevel(LogLevel logLevel) {
+	public Log setLogLevel(LogLevel logLevel) {
 		if(logLevel != null) {
 			this.logLevel = logLevel;
 		}
+		return this;
 	}
 	
 	/**
