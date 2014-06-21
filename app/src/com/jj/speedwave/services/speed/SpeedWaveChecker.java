@@ -1,5 +1,7 @@
 package com.jj.speedwave.services.speed;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.location.Location;
@@ -14,7 +16,7 @@ import android.location.Location;
 public class SpeedWaveChecker implements Runnable {
 	
 	private LocationProvider locationProvider;
-	private SpeedWaveListener listener;
+	private List<SpeedWaveListener> listeners = new ArrayList<SpeedWaveListener>();
 	private TimeProvider timeProvider;
 	
 	/**
@@ -22,14 +24,13 @@ public class SpeedWaveChecker implements Runnable {
 	 */
 	private static final float SPEED_LIMIT = 30 * 1.609f / 3.6f;
 	
-	public SpeedWaveChecker(LocationProvider currentLocationProvider, SpeedWaveListener listener) {
-		this(currentLocationProvider, listener, new DefaultTimeProvider());
+	public SpeedWaveChecker(LocationProvider currentLocationProvider, SpeedWaveListener... listeners) {
+		this(currentLocationProvider, new DefaultTimeProvider(), listeners);
 	}
 	
-	public SpeedWaveChecker(LocationProvider currentLocationProvider, SpeedWaveListener listener,
-			TimeProvider timeProvider) {
+	public SpeedWaveChecker(LocationProvider currentLocationProvider, TimeProvider timeProvider, SpeedWaveListener... listeners) {
 		this.locationProvider = currentLocationProvider;
-		this.listener = listener;
+		this.listeners.addAll(Arrays.asList(listeners));
 		this.timeProvider = timeProvider;
 	}
 
@@ -42,7 +43,7 @@ public class SpeedWaveChecker implements Runnable {
 		Location currentLocation = this.locationProvider.getCurrentLocation();
 		List<Location> locations = this.locationProvider.getPreviousLocations();
 		if(locations.size() == 0) {
-			this.listener.onFinish();
+			this.fireOnFinish();
 			return;
 		}
 		
@@ -59,7 +60,7 @@ public class SpeedWaveChecker implements Runnable {
 		long totalTime = this.getTotalTime(currentLocation, remoteLocation);
 		boolean tooFast = this.isTooFast(currentLocation, remoteLocation);
 		
-		this.listener.onSpeedUpdate(tooFast, remainingTime, tooFast ? totalTime : 0l);
+		this.fireOnSpeedUpdate(tooFast, remainingTime, tooFast ? totalTime : 0l);
 	}
 	
 	private long getRemainingTime(Location currentLocation, Location remoteLocation) {
@@ -87,6 +88,18 @@ public class SpeedWaveChecker implements Runnable {
 		float distance = remoteLocation.distanceTo(currentLocation);
 		
 		return Math.min(600, (long)Math.ceil(distance / SPEED_LIMIT));
+	}
+	
+	private void fireOnSpeedUpdate(boolean tooFast, long remainingSeconds, long totalSeconds) {
+		for(SpeedWaveListener l : this.listeners) {
+			l.onSpeedUpdate(tooFast, remainingSeconds, totalSeconds);
+		}
+	}
+	
+	private void fireOnFinish() {
+		for(SpeedWaveListener l : this.listeners) {
+			l.onFinish();
+		}
 	}
 	
 }

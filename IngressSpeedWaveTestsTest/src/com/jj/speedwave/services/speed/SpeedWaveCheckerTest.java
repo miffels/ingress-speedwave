@@ -6,13 +6,13 @@ import java.util.Arrays;
 import org.mockito.Mockito;
 
 import android.location.Location;
-import android.test.AndroidTestCase;
 
-public class SpeedWaveCheckerTest extends AndroidTestCase {
+public class SpeedWaveCheckerTest extends BaseTest {
 	
+	@Override
 	public void setUp() throws Exception {
-        System.setProperty("dexmaker.dexcache", getContext().getCacheDir().getPath()); // Workaround for missing dex cache
-    }
+		super.setUp();
+	}
 	
 	private Location mockLocation() {
 		return Mockito.mock(Location.class);		
@@ -72,7 +72,7 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 		
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
 		
-		new SpeedWaveChecker(locationProvider, listener, mockTimeProvider(1000l)).run();;
+		new SpeedWaveChecker(locationProvider, mockTimeProvider(1000l), listener).run();;
 		
 		Mockito.verify(listener).onSpeedUpdate(false, 0, 0);
 		Mockito.verifyNoMoreInteractions(listener);
@@ -88,7 +88,7 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 		
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
 		
-		new SpeedWaveChecker(locationProvider, listener, mockTimeProvider(1000l)).run();;
+		new SpeedWaveChecker(locationProvider, mockTimeProvider(1000l), listener).run();;
 		
 		Mockito.verify(listener).onSpeedUpdate(true, 7, 8);
 		Mockito.verifyNoMoreInteractions(listener);
@@ -107,7 +107,7 @@ public class SpeedWaveCheckerTest extends AndroidTestCase {
 		
 		SpeedWaveListener listener = Mockito.mock(SpeedWaveListener.class);
 		
-		new SpeedWaveChecker(locationProvider, listener, mockTimeProvider(2000l)).run();;
+		new SpeedWaveChecker(locationProvider, mockTimeProvider(2000l), listener).run();;
 		
 		Mockito.verify(listener).onSpeedUpdate(true, 599, 600);
 		Mockito.verifyNoMoreInteractions(listener);

@@ -45,7 +45,6 @@ public class IngressListenerService extends Service {
 		activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
 		scheduler = Executors.newSingleThreadScheduledExecutor();
 		broadcastManager = LocalBroadcastManager.getInstance(this.getApplicationContext());
-		
 		scheduler.scheduleAtFixedRate
 			      (new Runnable() {
 			    	 @Override
