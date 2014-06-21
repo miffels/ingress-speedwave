@@ -54,7 +54,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 		}
 		
 		this.shouldStop = false;
-		this.notificationManager.setHideNotification(true);
+		this.notificationManager.resetHideNotification();
 		return super.onStartCommand(intent, flags, startId);
 	}
 	

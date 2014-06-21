@@ -73,8 +73,15 @@ public class SpeedWaveNotificationManager implements SpeedWaveListener {
 		this.suggestCancel();
 	}
 
-	public void setHideNotification(boolean shouldHideNotification) {
-		this.shouldHideNotification = shouldHideNotification;
+	/**
+	 * Resets the state of this notification manager, so that the notification is automatically dismissed
+	 * when suggestCancel() is called. This state is overwritten as soon as the user exceeds the speed limit,
+	 * so that the notification will remain in that case.
+	 * 
+	 * @param shouldHideNotification
+	 */
+	public void resetHideNotification() {
+		this.shouldHideNotification = true;
 	}
 	
 	public void suggestCancel() {
