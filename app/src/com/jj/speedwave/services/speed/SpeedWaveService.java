@@ -19,7 +19,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.jj.speedwave.R;
 import com.jj.speedwave.services.LocationReceiver;
 import com.jj.speedwave.services.LocationUpdateHandler;
-import com.jj.speedwave.services.StopReceiver;
+import com.jj.speedwave.services.IngressStopReceiver;
 import com.jj.speedwave.services.StoppableService;
 import com.jj.speedwave.util.Log;
 
@@ -32,7 +32,7 @@ public class SpeedWaveService extends Service implements StoppableService, Locat
 	private Builder builder;
 	private NotificationManager notificationManager;
 	
-	private StopReceiver stopReceiver = new StopReceiver(this);
+	private IngressStopReceiver stopReceiver = new IngressStopReceiver(this);
 	private LocationReceiver locationReceiver = new LocationReceiver(this);
 	
 	private List<Location> locations = new ArrayList<Location>();

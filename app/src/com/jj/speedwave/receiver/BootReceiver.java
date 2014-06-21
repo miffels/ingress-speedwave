@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import com.jj.speedwave.util.Log;
 
-public class BootBroadcastReceiver extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
 	
 	private static final Log LOG = new Log();
 

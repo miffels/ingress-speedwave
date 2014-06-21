@@ -17,7 +17,7 @@ import android.support.v4.content.LocalBroadcastManager;
  * @author Michael Jess
  *
  */
-public class ApplicationBroadcastReceiver extends BroadcastReceiver {
+public class IngressStartReceiver extends BroadcastReceiver {
 	
 	private static final Log LOG = new Log();
 	
