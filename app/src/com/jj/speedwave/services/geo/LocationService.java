@@ -73,7 +73,9 @@ public class LocationService extends Service implements LocationListener {
 	 */
 	private void checkLocation(Location location) {
 		if(!this.isAccurate(location)) {
-			LOG.d("Location inaccurate (" + location.getAccuracy() + ")");
+			LOG.d(location == null ?
+					"Location inaccurate (unavailable)" :
+					"Location inaccurate (" + location.getAccuracy() + ")");
 		} else {
 			this.broadcastManager.sendBroadcast(
 					new Intent(Intents.GEO_UPDATE)

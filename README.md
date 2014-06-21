@@ -21,6 +21,10 @@ i.e., when 10 minutes since the last location update in Ingress have passed or t
 Changes
 -------
 
+- v0.1.3
+ - Fixed crash when rebooting
+ - Fixed crash when starting Ingress
+
 - v0.1.2
  - Lots of refactoring
  - Some more tests
