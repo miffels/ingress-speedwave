@@ -15,11 +15,11 @@ import com.jj.speedwave.util.Intents;
  * @author Michael Jess
  *
  */
-public class StopReceiver extends BroadcastReceiver {
+public class IngressStopReceiver extends BroadcastReceiver {
 
 	private StoppableService service;
 	
-	public StopReceiver(StoppableService service) {
+	public IngressStopReceiver(StoppableService service) {
 		this.service = service;
 	}
 

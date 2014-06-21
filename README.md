@@ -18,14 +18,34 @@ you can perform actions again, assuming that you are not moving at exceedingly h
 Ingress Integrated Timer inspired me to write an application that would keep track of your movement while playing Ingress and be able to tell you when exactly you can play again -
 i.e., when 10 minutes since the last location update in Ingress have passed or the speed wave passed by. 
 
+Changes
+-------
+
+- v0.1.2
+ - Lots of refactoring
+ - Some more tests
+ - Gray notification is now ongoing (sticky)
+ - Green notification is no more pseudo-sticky and will only be displayed when
+  - Ingress is first started (this resets after ~10 minutes of not playing Ingress)
+  - The notification timer finished
+ - Tapping the green notification now opens Ingress
+ - Tapping the green notification now dismisses it
+ - Location and Ingress Listener background services are now explicitly stopped when the screen is locked
+  
+- v0.1.1
+ - Changed application name to "SpeedWave"
+ - Added proper application icons 
+- v0.1
+ - Initial version
+
+Acknowledgements
+----------------
+
+- keibertz
+ - Local agent empirically confirming the speed limit of 30 mph
+
 Screenshots
 -----------
 
 ![Notification while not being blocked](https://dl.dropboxusercontent.com/u/9409349/SpeedWave/fine.png "Notification while not being blocked")
 ![Notification while being blocked](https://dl.dropboxusercontent.com/u/9409349/SpeedWave/blocked.png " while being blocked")
-
-Acknowledgements
-----------------
-
-keibertz
-	Local agent empirically confirming the speed limit of 30 mph

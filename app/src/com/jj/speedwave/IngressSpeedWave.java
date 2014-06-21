@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.jj.speedwave.receiver.ScreenReceiver;
 import com.jj.speedwave.services.ingress.IngressListenerService;
 import com.jj.speedwave.util.Log;
 
@@ -20,7 +21,8 @@ public class IngressSpeedWave extends Application {
 	@Override
 	public void onCreate() {
 		LOG.d("Application started");
-		new ApplicationBroadcastReceiver().registerWith(LocalBroadcastManager.getInstance(this));
+		new IngressStartReceiver().registerWith(LocalBroadcastManager.getInstance(this));
+		new ScreenReceiver().registerWith(this);
 		this.startService(new Intent(this, IngressListenerService.class));
 	}
 

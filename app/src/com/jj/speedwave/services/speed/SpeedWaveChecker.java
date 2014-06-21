@@ -1,15 +1,22 @@
 package com.jj.speedwave.services.speed;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.location.Location;
 
-// Just a sample to check if the concept is fine
+/**
+ * Strategy implementing one possible Ingress speed limit check. This checker assumes that all interaction
+ * is blocked whenever the player moves too fast from the furthest known previous location.
+ * 
+ * @author Michael Jess
+ *
+ */
 public class SpeedWaveChecker implements Runnable {
 	
-	private List<Location> locations;
-	private CurrentLocationProvider currentLocationProvider;
-	private SpeedWaveListener listener;
+	private LocationProvider locationProvider;
+	private List<SpeedWaveListener> listeners = new ArrayList<SpeedWaveListener>();
 	private TimeProvider timeProvider;
 	
 	/**
@@ -17,26 +24,26 @@ public class SpeedWaveChecker implements Runnable {
 	 */
 	private static final float SPEED_LIMIT = 30 * 1.609f / 3.6f;
 	
-	public SpeedWaveChecker(List<Location> locations,
-			CurrentLocationProvider currentLocationProvider, SpeedWaveListener listener) {
-		this(locations, currentLocationProvider, listener, new DefaultTimeProvider());
+	public SpeedWaveChecker(LocationProvider currentLocationProvider, SpeedWaveListener... listeners) {
+		this(currentLocationProvider, new DefaultTimeProvider(), listeners);
 	}
 	
-	public SpeedWaveChecker(List<Location> locations,
-			CurrentLocationProvider currentLocationProvider, SpeedWaveListener listener, TimeProvider timeProvider) {
-		this.locations = locations;
-		this.currentLocationProvider = currentLocationProvider;
-		this.listener = listener;
+	public SpeedWaveChecker(LocationProvider currentLocationProvider, TimeProvider timeProvider, SpeedWaveListener... listeners) {
+		this.locationProvider = currentLocationProvider;
+		this.listeners.addAll(Arrays.asList(listeners));
 		this.timeProvider = timeProvider;
 	}
 
 	@Override
 	public void run() {
-		Location currentLocation = this.currentLocationProvider.getCurrentLocation();
-		if(this.locations.size() == 0) {
-			this.listener.onFinish();
+		if(!this.locationProvider.isReady()) {
+			return;
 		}
-		if(currentLocation == null || this.locations.size() < 2) {
+		
+		Location currentLocation = this.locationProvider.getCurrentLocation();
+		List<Location> locations = this.locationProvider.getPreviousLocations();
+		if(locations.size() == 0) {
+			this.fireOnFinish();
 			return;
 		}
 		
@@ -44,16 +51,16 @@ public class SpeedWaveChecker implements Runnable {
 		long remainingTime;
 		Location remoteLocation;
 		do {
-			remoteLocation = this.locations.get(i);
+			remoteLocation = locations.get(i);
 			remainingTime = this.getRemainingTime(currentLocation, remoteLocation);
 			i++;
-		} while(this.locations.get(i) != currentLocation &&
-				remainingTime < this.getRemainingTime(currentLocation, this.locations.get(i)));
+		} while(i < locations.size() &&
+				remainingTime < this.getRemainingTime(currentLocation, locations.get(i)));
 		
 		long totalTime = this.getTotalTime(currentLocation, remoteLocation);
 		boolean tooFast = this.isTooFast(currentLocation, remoteLocation);
 		
-		this.listener.onSpeedUpdate(tooFast, remainingTime, tooFast ? totalTime : 0l);
+		this.fireOnSpeedUpdate(tooFast, remainingTime, tooFast ? totalTime : 0l);
 	}
 	
 	private long getRemainingTime(Location currentLocation, Location remoteLocation) {
@@ -81,6 +88,18 @@ public class SpeedWaveChecker implements Runnable {
 		float distance = remoteLocation.distanceTo(currentLocation);
 		
 		return Math.min(600, (long)Math.ceil(distance / SPEED_LIMIT));
+	}
+	
+	private void fireOnSpeedUpdate(boolean tooFast, long remainingSeconds, long totalSeconds) {
+		for(SpeedWaveListener l : this.listeners) {
+			l.onSpeedUpdate(tooFast, remainingSeconds, totalSeconds);
+		}
+	}
+	
+	private void fireOnFinish() {
+		for(SpeedWaveListener l : this.listeners) {
+			l.onFinish();
+		}
 	}
 	
 }
