@@ -90,4 +90,8 @@ public class SpeedWaveNotificationManager implements SpeedWaveListener {
 		}
 	}
 	
+	public void forceCancel() {
+		this.notificationManager.cancel(NOTIFICATION_ID);
+	}
+	
 }

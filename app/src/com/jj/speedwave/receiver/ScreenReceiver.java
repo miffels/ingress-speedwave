@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import com.jj.speedwave.Preferences;
 import com.jj.speedwave.services.geo.LocationService;
 import com.jj.speedwave.services.ingress.IngressListenerService;
 import com.jj.speedwave.util.Log;
@@ -20,6 +21,12 @@ import com.jj.speedwave.util.Log;
 public class ScreenReceiver extends BroadcastReceiver {
 
 	private static final Log LOG = new Log();
+	
+	private Preferences preferences;
+	
+	public ScreenReceiver(Preferences preferences) {
+		this.preferences = preferences;
+	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -27,7 +34,7 @@ public class ScreenReceiver extends BroadcastReceiver {
 		if(Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
 			context.stopService(new Intent(context, IngressListenerService.class));
 			context.stopService(new Intent(context, LocationService.class));
-		} else {
+		} else if(this.preferences.isEnabled()) {
 			context.startService(new Intent(context, IngressListenerService.class));
 		}
 	}

@@ -4,5 +4,7 @@
     <string name="app_name">SpeedWave</string>
     <string name="settings_placeholder">Background services started. You may close this window now. Have fun playing Ingress!</string>
     <string name="action_settings">Settings</string>
+    <string name="prefs_enabled">Enabled</string>
+    <string name="prefs_enabled_summary">Toggle SpeedWave tracking</string>
 
 </resources>

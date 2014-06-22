@@ -1,8 +1,8 @@
 package com.jj.speedwave.ui;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,21 +16,15 @@ import com.jj.speedwave.util.Log;
  * @author Michael Jess
  *
  */
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends PreferenceActivity {
 	
 	private static final Log LOG = new Log();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_settings);
 		
-		LOG.d("Settings start");
-
-		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, new PlaceholderFragment()).commit();
-		}
+		this.addPreferencesFromResource(R.xml.preferences);
 	}
 
 //	@Override

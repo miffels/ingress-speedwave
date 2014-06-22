@@ -63,8 +63,8 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 		LOG.d("Speed wave service stopped");
 		this.broadcastManager.unregisterReceiver(this.stopReceiver);
 		this.broadcastManager.unregisterReceiver(this.locationReceiver);
-		this.notificationManager.suggestCancel();
 		this.scheduler.shutdown();
+		this.notificationManager.forceCancel();
 		this.locationManager.shutdown();
 	}
 
@@ -78,7 +78,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 		this.shouldStop = true;
 		this.notificationManager.suggestCancel();
 	}
-
+	
 	@Override
 	public void onSpeedUpdate(boolean isTooFast, long remainingSeconds,
 			long totalSeconds) {
