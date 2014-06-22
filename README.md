@@ -21,6 +21,13 @@ i.e., when 10 minutes since the last location update in Ingress have passed or t
 Changes
 -------
 
+- v0.2.0
+ - Added preferences screen
+ - Added option to enable/disable (and start/stop) SpeedWave tracking from preferences screen
+ - Improved tracking while Ingress is closed:
+  - Instead of stopping location updates, SpeedWave will continue updating the _current_ location until the user's actions are no longer blocked
+  - _Previous_ location updates are unaffected and will stop with Ingress being closed, just as before 
+
 - v0.1.3
  - Fixed crash when rebooting
  - Fixed crash when starting Ingress
