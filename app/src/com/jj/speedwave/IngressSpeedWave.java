@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.jj.speedwave.receiver.ScreenReceiver;
+import com.jj.speedwave.services.IngressStartReceiver;
 import com.jj.speedwave.services.geo.LocationService;
 import com.jj.speedwave.services.ingress.IngressListenerService;
 import com.jj.speedwave.services.speed.SpeedWaveService;

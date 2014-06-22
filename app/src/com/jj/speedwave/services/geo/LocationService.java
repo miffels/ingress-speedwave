@@ -22,7 +22,6 @@ import com.jj.speedwave.util.Log;
 public class LocationService extends Service implements LocationListener {
 	
 	private static final Log LOG = new Log();
-	private LocationBroadcastReceiver broadcastReceiver = new LocationBroadcastReceiver();
 	private LocationManager locationManager;
 	private LocalBroadcastManager broadcastManager;
 	
@@ -46,7 +45,6 @@ public class LocationService extends Service implements LocationListener {
 	 * Initializes the dependecies of this service.
 	 */
 	private void init() {
-		this.broadcastReceiver.registerWith(LocalBroadcastManager.getInstance(this));
 		this.locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 		this.broadcastManager = LocalBroadcastManager.getInstance(this);
 	}
@@ -102,8 +100,6 @@ public class LocationService extends Service implements LocationListener {
 	@Override
 	public void onDestroy() {
 		LOG.d("Geo service stopped");
-		
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(this.broadcastReceiver);
 		locationManager.removeUpdates(this);
 		super.onDestroy();
 	}

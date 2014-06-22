@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 
-import com.jj.speedwave.util.Log;
-
 /**
  * Encapsulates and provides access to the preferences relevant to mobEx.
  * 
@@ -14,8 +12,6 @@ import com.jj.speedwave.util.Log;
  * 
  */
 public class Preferences {
-	
-	private static final Log LOG = new Log();
 	
 	/**
 	 * The underlying preference object

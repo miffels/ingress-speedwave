@@ -15,6 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.jj.speedwave.services.IngressStopReceiver;
 import com.jj.speedwave.services.LocationReceiver;
 import com.jj.speedwave.services.StoppableService;
+import com.jj.speedwave.services.geo.LocationService;
 import com.jj.speedwave.util.Log;
 
 public class SpeedWaveService extends Service implements StoppableService, SpeedWaveListener {
@@ -55,6 +56,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 		
 		this.shouldStop = false;
 		this.notificationManager.resetHideNotification();
+		this.locationManager.setTrackPreviousLocations(true);
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
@@ -77,6 +79,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 	public void suggestStop() {
 		this.shouldStop = true;
 		this.notificationManager.suggestCancel();
+		this.locationManager.setTrackPreviousLocations(false);
 	}
 	
 	@Override
@@ -91,6 +94,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 	public void onFinish() {
 		if(this.shouldStop) {
 			LOG.d("Locations faded, going to sleep");
+			this.stopService(new Intent(this, LocationService.class));
 			this.stopSelf();
 		}
 	}

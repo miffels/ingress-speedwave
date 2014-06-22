@@ -33,5 +33,5 @@ public interface LocationProvider {
 	 * @return true if sufficient locations are available
 	 */
 	public boolean isReady();
-
+	
 }

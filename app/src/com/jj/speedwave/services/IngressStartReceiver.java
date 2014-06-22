@@ -1,4 +1,4 @@
-package com.jj.speedwave;
+package com.jj.speedwave.services;
 
 import com.jj.speedwave.services.geo.LocationService;
 import com.jj.speedwave.services.speed.SpeedWaveService;

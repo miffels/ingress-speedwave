@@ -16,14 +16,15 @@ public class LocationManager implements LocationUpdateHandler, LocationProvider 
 	private List<Location> locations = new ArrayList<Location>();
 	private Location currentLocation;
 	private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	private boolean trackPreviousLocations = true;
 	
-	private long numberOfUpdates = 0;
+	private long numberOfUpdates = 1;
 	
 	@Override
 	public void updateLocation(Location location) {
-		this.numberOfUpdates++;
 		synchronized(this.locations) {
-			if(this.currentLocation != null) {
+			if(this.currentLocation != null && this.trackPreviousLocations) {
+				this.numberOfUpdates++;
 				this.locations.add(this.currentLocation);
 				Collections.sort(this.locations, new DescendingDistanceComparator(this.currentLocation));
 				this.scheduler.schedule(new LocationRemover(this.locations, this.currentLocation), 10, TimeUnit.MINUTES);
@@ -55,6 +56,16 @@ public class LocationManager implements LocationUpdateHandler, LocationProvider 
 	@Override
 	public boolean isReady() {
 		return this.numberOfUpdates > 1;
+	}
+	
+	/**
+	 * If set to true, this location manager will track location updates as previously known locations.
+	 * When set to false, only the current location will be updated and no tracking will take place.
+	 * 
+	 * @param trackPreviousLocations
+	 */
+	public void setTrackPreviousLocations(boolean trackPreviousLocations) {
+		this.trackPreviousLocations = trackPreviousLocations;
 	}
 
 }
