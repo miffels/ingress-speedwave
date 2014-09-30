@@ -1,10 +1,9 @@
 package com.jj.speedwave;
 
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-
 import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -21,7 +20,7 @@ import com.jj.speedwave.util.Log;
  * @author Michael Jess
  *
  */
-public class IngressSpeedWave extends Application implements PreferenceChangeListener {
+public class IngressSpeedWave extends Application implements OnSharedPreferenceChangeListener {
 	
 	private static final Log LOG = new Log();
 	
@@ -32,6 +31,10 @@ public class IngressSpeedWave extends Application implements PreferenceChangeLis
 		LOG.d("Application started");
 		
 		this.preferences =  new Preferences(this, PreferenceManager.getDefaultSharedPreferences(this));
+		this.preferences.registerOnSharedPreferenceChangeListener(this);
+		
+		new IngressStartReceiver().registerWith(LocalBroadcastManager.getInstance(this));
+		new ScreenReceiver(this.preferences).registerWith(this);
 		
 		if(this.preferences.isEnabled()) {
 			this.start();
@@ -39,8 +42,6 @@ public class IngressSpeedWave extends Application implements PreferenceChangeLis
 	}
 	
 	private void start() {
-		new IngressStartReceiver().registerWith(LocalBroadcastManager.getInstance(this));
-		new ScreenReceiver(this.preferences).registerWith(this);
 		this.startService(new Intent(this, IngressListenerService.class));
 	}
 	
@@ -48,6 +49,7 @@ public class IngressSpeedWave extends Application implements PreferenceChangeLis
 		this.stopService(new Intent(this, IngressListenerService.class));
 		this.stopService(new Intent(this, LocationService.class));
 		this.stopService(new Intent(this, SpeedWaveService.class));
+		
 	}
 
 	@Override
@@ -56,14 +58,15 @@ public class IngressSpeedWave extends Application implements PreferenceChangeLis
 	}
 
 	@Override
-	public void preferenceChange(PreferenceChangeEvent pce) {
-		if(Preferences.ENABLED_KEY.equals(pce.getKey())) {
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		if(Preferences.ENABLED_KEY.equals(key)) {
 			if(this.preferences.isEnabled()) {
 				this.start();
 			} else {
 				this.stop();
 			}
-		}
+		}		
 	}
 	
 

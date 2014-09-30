@@ -1,5 +1,6 @@
 package com.jj.speedwave.services.speed;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +55,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 			this.initial = false;
 		}
 		
-		this.shouldStop = false;
+		this.shouldStop = true;
 		this.notificationManager.resetHideNotification();
 		this.locationManager.setTrackPreviousLocations(true);
 		return super.onStartCommand(intent, flags, startId);
@@ -68,6 +69,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 		this.scheduler.shutdown();
 		this.notificationManager.forceCancel();
 		this.locationManager.shutdown();
+		this.stopService(new Intent(this, LocationService.class));
 	}
 
 	@Override
@@ -77,6 +79,7 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 
 	@Override
 	public void suggestStop() {
+		LOG.d("Should close when locations faded...");
 		this.shouldStop = true;
 		this.notificationManager.suggestCancel();
 		this.locationManager.setTrackPreviousLocations(false);
@@ -94,7 +97,6 @@ public class SpeedWaveService extends Service implements StoppableService, Speed
 	public void onFinish() {
 		if(this.shouldStop) {
 			LOG.d("Locations faded, going to sleep");
-			this.stopService(new Intent(this, LocationService.class));
 			this.stopSelf();
 		}
 	}
